@@ -16,6 +16,7 @@
     - name: Install Java & Maven
       become: yes
       apt:
+
         name:
           - openjdk-8-jdk-headless
           - maven

@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-18.04"
   
   config.vm.define :db do |db_config|
-    config.vm.network "private_network", ip: "192.168.33.10"
+    db_config.vm.network "private_network", ip: "192.168.33.10"
     db_config.vm.hostname = "database"
     db_config.vm.provider :virtualbox do |vb|
       vb.name = "database"
@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :web do |web_config|
-      config.vm.network "private_network", ip: "192.168.33.20"
+      web_config.vm.network "private_network", ip: "192.168.33.20"
       web_config.vm.hostname = "web"
       web_config.vm.provider :virtualbox do |vb|
         vb.name = "web"
@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define :ci do |ci_config|
-      config.vm.network "private_network", ip: "192.168.33.30"
+      ci_config.vm.network "private_network", ip: "192.168.33.30"
       ci_config.vm.hostname = "ci"
       ci_config.vm.provider :virtualbox do |vb|
         vb.name = "ci"
