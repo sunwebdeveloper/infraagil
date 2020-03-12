@@ -4,6 +4,10 @@ pipeline {
     stages {
         stage("Limpando a workspace") {
             steps {
+                slackSend(color: 'info', message: "Iniciando processo de continuos deployment do projeto: ${JOB_URL}", channel: 'devops-rafael')
+            }
+
+            steps {
                     sh 'pwd'
                     deleteDir()
             }
@@ -25,20 +29,12 @@ pipeline {
            steps {
                sh "mvn clean package -DskipTests "
            }
-       }
-
-       stage('Solicitando aprovacao') {
            steps {
-               script {
-                   slackSend(color: 'warning', message: "Para aprovar este deploy clique aqui: ${JOB_URL} - [Janela de 5 minutos]", channel: 'devops-rafael')
-                   timeout(time: 5, unit: 'MINUTES') {
-                   input(id: "Deploy Decision", message: "Deseja aprovar o deploy?", ok: 'Deploy')
-               }
-            }
+               slackSend(color: 'info', message: "Continuos deployment do projeto: ${JOB_URL} realizado com sucesso.", channel: 'devops-rafael')
            }
        }
 
-       stage(deploy) {
+       stage('Deploy') {
            steps {
                sh 'scp -o StrictHostKeyChecking=no -i /home/vagrant/devops target/alura-forum.war vagrant@192.168.33.20:/home/vagrant/alura-forum.war'
                sh "ssh -o StrictHostKeyChecking=no -i /home/vagrant/devops vagrant@192.168.33.20 'sudo mv /home/vagrant/alura-forum.war /var/lib/tomcat8/webapps/alura-forum.war'"
