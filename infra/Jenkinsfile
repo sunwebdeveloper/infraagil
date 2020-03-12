@@ -1,48 +1,48 @@
-pipeline{
+pipeline {
     agent any
 
     stages {
-        stage("Limpando a Workspace"){
+        stage("Limpando a workspace") {
             steps {
-    	            sh 'pwd'
-	                deleteDir()
+                    sh 'pwd'
+                    deleteDir()
             }
-        }
+       }
 
-        stage("Clonando projeto do github"){
-            steps {
-                git credentialsId: 'github-ssh', url: 'git@github.com:sunwebdeveloper/infraagil.git'
-            }
-        }
+       stage("Clonando projeto do github") {
+           steps {
+               git credentialsId: 'github-ssh', url: "git@github.com:sunwebdeveloper/infraagil.git"
+           }
+       }
 
-        stage("Rodando testes unitários"){
-            steps {
-                sh 'mvn clean install'
-            }
-        }
+       stage('Rodar testes unitarios') {
+           steps {
+               sh "mvn clean test "
+           }
+       }
 
-        stage("Gerando pacote da aplicacao Alura-forum"){
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
+       stage('Gerando artefato') {
+           steps {
+               sh "mvn clean package -DskipTests "
+           }
+       }
 
-        stage("Solicitando aprovacao"){
-            steps {
-                script {
-                    slackSend(color: 'warning', message: "Para aprovar esse Deploy, clique aqui: ${JOB_URL} - [Janela de 5 minutos]", channel: 'devops-rafael')
-                    timeout(time: 5, unit: 'MINUTES') {
-                        input(id: "Deploy Decision", message: "Deseja aprovar o deploy?", ok: 'Deploy')
-                    }
-                }
+       stage('Solicitando aprovacao') {
+           steps {
+               script {
+                   slackSend(color: 'warning', message: "Para aprovar este deploy clique aqui: ${JOB_URL} - [Janela de 5 minutos]", channel: 'devops-rafael')
+                   timeout(time: 5, unit: 'MINUTES') {
+                   input(id: "Deploy Decision", message: "Deseja aprovar o deploy?", ok: 'Deploy')
+               }
             }
-        }
+           }
+       }
 
-        stage(deploy){
-            steps {
-                sh 'scp -o StrictHostKeyChecking=no -i /home/vagrant/jenkins target/alura-forum.war vagrant@192.168.33.20:/home/vagrant/alura-forum.war'
-                sh "ssh -o StrictHostKeyChecking=no -i /home/vagrant/jenkins vagrant@192.168.33.20 'sudo mv /home/vagrant/alura-forum.war /var/lib/tomcat8/webapps/alura-forum.war'"
-            }
-        }
+       stage(deploy) {
+           steps {
+               sh 'scp -o StrictHostKeyChecking=no -i /home/vagrant/devops target/alura-forum.war vagrant@192.168.33.20:/home/vagrant/alura-forum.war'
+               sh "ssh -o StrictHostKeyChecking=no -i /home/vagrant/devops vagrant@192.168.33.20 'sudo mv /home/vagrant/alura-forum.war /var/lib/tomcat8/webapps/alura-forum.war'"
+           }
+       }
     }
 }
