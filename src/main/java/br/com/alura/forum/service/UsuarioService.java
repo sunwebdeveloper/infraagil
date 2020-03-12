@@ -20,7 +20,7 @@ public class UsuarioService implements UserDetailsService {
 		Usuario encontrado = usuarioDao.buscarPorEmail(email);
 		
 		if (encontrado == null) {
-			throw new UsernameNotFoundException("Dados invalidos!");
+			throw new UsernameNotFoundException("Dados inválidos!");
 		}
 		
 		return encontrado;
