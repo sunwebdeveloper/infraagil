@@ -3,14 +3,11 @@ pipeline {
 
     stages {
         stage("Limpando a workspace") {
-            steps {
-                slackSend(color: 'info', message: "Iniciando processo de continuos deployment do projeto: ${JOB_URL}", channel: 'devops-rafael')
-            }
-
-            steps {
+           steps {
+                    slackSend(color: 'info', message: "Iniciando processo de continuos deployment do projeto: ${JOB_URL}", channel: 'devops-rafael')
                     sh 'pwd'
                     deleteDir()
-            }
+           }
        }
 
        stage("Clonando projeto do github") {
@@ -28,8 +25,6 @@ pipeline {
        stage('Gerando artefato') {
            steps {
                sh "mvn clean package -DskipTests "
-           }
-           steps {
                slackSend(color: 'info', message: "Continuos deployment do projeto: ${JOB_URL} realizado com sucesso.", channel: 'devops-rafael')
            }
        }
