@@ -25,7 +25,6 @@ pipeline {
        stage('Gerando artefato') {
            steps {
                sh "mvn clean package -DskipTests "
-               slackSend(color: 'info', message: "Continuos deployment do projeto: ${JOB_URL} realizado com sucesso.", channel: 'devops-rafael')
            }
        }
 
@@ -33,6 +32,7 @@ pipeline {
            steps {
                sh 'scp -o StrictHostKeyChecking=no -i /home/vagrant/jenkins target/alura-forum.war vagrant@192.168.33.20:/home/vagrant/alura-forum.war'
                sh "ssh -o StrictHostKeyChecking=no -i /home/vagrant/jenkins vagrant@192.168.33.20 'sudo mv /home/vagrant/alura-forum.war /var/lib/tomcat8/webapps/alura-forum.war'"
+               slackSend(color: 'info', message: "Continuos deployment do projeto: ${JOB_URL} realizado com sucesso.", channel: 'devops-rafael')
            }
        }
     }
